@@ -115,12 +115,16 @@ module.exports = function makeWebpackConfig() {
       // use 'null' loader in test mode (https://github.com/webpack/null-loader)
       // all css in src/style will be bundled in an external css file
       {
+        test: /\.local.scss$/,
+        loader: isTest ? 'null' : ExtractTextPlugin.extract('style', 'css?localIdentName=[name]---[local]---[hash:base64:5]&-minimize&sourceMap!postcss!sass')
+      },
+      {
         test: /\.scss$/,
-        exclude: root('src', 'app'),
+        exclude: [root('src', 'app'), /\.local.scss$/],
         loader: isTest ? 'null' : ExtractTextPlugin.extract('style', 'css?sourceMap!postcss!sass')
       },
       // all css required in src/app files will be merged in js files
-      {test: /\.scss$/, exclude: root('src', 'style'), loader: 'raw!postcss!sass'},
+      {test: /\.scss$/, exclude: [root('src', 'style'), /\.local.scss$/], loader: 'raw!postcss!sass'},
 
       // support for .html as raw text
       // todo: change the loader to something that adds a hash to images
